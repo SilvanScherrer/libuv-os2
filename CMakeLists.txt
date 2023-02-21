@@ -298,6 +298,17 @@ if(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
   list(APPEND uv_sources src/unix/no-proctitle.c src/unix/sunos.c)
 endif()
 
+if (OS2)
+  list(APPEND uv_sources
+    src/unix/no-fsevents.c
+    src/unix/no-proctitle.c
+    src/unix/bsd-ifaddrs.c
+    src/unix/posix-poll.c
+    src/unix/posix-hrtime.c
+    src/unix/os2.c
+    )
+endif()
+
 if(APPLE OR CMAKE_SYSTEM_NAME MATCHES "DragonFly|FreeBSD|Linux|NetBSD|OpenBSD")
   list(APPEND uv_test_libraries util)
 endif()
@@ -576,6 +587,22 @@ if(UNIX OR MINGW)
   install(TARGETS uv LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
   install(TARGETS uv_a ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
+
+  if(OS2)
+    # Consider setting project version via project() call?
+    file(STRINGS configure.ac configure_ac REGEX ^AC_INIT)
+    string(REGEX MATCH "([0-9]+)[.]([0-9]+)[.]([0-9]+)" PACKAGE_VERSION "${configure_ac}")
+    set(UV_VERSION_MAJOR "${CMAKE_MATCH_1}")
+    set(UV_VERSION_MINOR "${CMAKE_MATCH_2}")
+    set(UV_VERSION_PATCH "${CMAKE_MATCH_3}")
+    set_target_properties(uv PROPERTIES
+      VERSION ${UV_VERSION_MAJOR}.0.0
+      SOVERSION ${UV_VERSION_MAJOR})
+    set_target_properties(uv PROPERTIES
+      OS2_DEF_VENDOR "$ENV{VENDOR}"
+      OS2_DEF_PATCH "${UV_VERSION_PATCH}"
+      OS2_DEF_VERSION "${UV_VERSION_MAJOR}.${UV_VERSION_MINOR}.${UV_VERSION_PATCH}")
+  endif()
 
 if(MSVC)
   install(DIRECTORY include/ DESTINATION include)

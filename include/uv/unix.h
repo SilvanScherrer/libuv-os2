@@ -69,6 +69,9 @@
 # include "uv/posix.h"
 #elif defined(__HAIKU__)
 # include "uv/posix.h"
+#elif defined(__OS2__)
+# include "posix.h"
+# include <libcx/net.h>
 #endif
 
 #ifndef NI_MAXHOST
