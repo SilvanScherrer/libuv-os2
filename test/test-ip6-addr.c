@@ -170,10 +170,14 @@ TEST_IMPL(ip6_pton) {
 #undef BAD_ADDR_LIST
 
 TEST_IMPL(ip6_sin6_len) {
+#if defined(__OS2__)
+  RETURN_SKIP("This test is not working on OS/2");
+#else
   struct sockaddr_in6 s;
   ASSERT_EQ(0, uv_ip6_addr("::", 0, &s));
 #ifdef SIN6_LEN
   ASSERT(s.sin6_len == sizeof(s));
 #endif
   return 0;
+#endif
 }
