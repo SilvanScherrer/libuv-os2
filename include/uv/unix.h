@@ -70,7 +70,7 @@
 #elif defined(__HAIKU__)
 # include "uv/posix.h"
 #elif defined(__OS2__)
-# include "posix.h"
+# include "uv/posix.h"
 # include <libcx/net.h>
 #elif defined(__QNX__)
 # include "uv/posix.h"
