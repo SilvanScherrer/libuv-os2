@@ -436,8 +436,10 @@ int uv_spawn(uv_loop_t* loop,
   sigdelset(&signewset, SIGILL);
   sigdelset(&signewset, SIGSYS);
   sigdelset(&signewset, SIGABRT);
+#ifndef __OS2__
   if (pthread_sigmask(SIG_BLOCK, &signewset, &sigoldset) != 0)
     abort();
+#endif
 
   pid = fork();
   if (pid == -1)
@@ -446,8 +448,10 @@ int uv_spawn(uv_loop_t* loop,
   if (pid == 0)
     uv__process_child_init(options, stdio_count, pipes, signal_pipe[1]);
 
+#ifndef __OS2__
   if (pthread_sigmask(SIG_SETMASK, &sigoldset, NULL) != 0)
     abort();
+#endif
 
   /* Release lock in parent process */
   uv_rwlock_wrunlock(&loop->cloexec_lock);
